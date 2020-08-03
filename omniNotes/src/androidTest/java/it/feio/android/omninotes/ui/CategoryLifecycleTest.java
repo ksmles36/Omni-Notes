@@ -77,6 +77,7 @@ public class CategoryLifecycleTest extends BaseEspressoTest {
     onView(allOf(withId(R.id.menu_category), withContentDescription(R.string.category), isDisplayed())).perform(
         click());
 
+    sleep(1000);
     onView((withText(R.string.add_category))).perform(click());
 
     sleep(1000);
@@ -101,7 +102,6 @@ public class CategoryLifecycleTest extends BaseEspressoTest {
   }
 
   @Test
-  @FlakyTest(detail = "Fixme with Idling Resources or BusyBee") // FIXME
   public void checkCategoryCreation () throws InterruptedException {
 
     addNewCategory();
@@ -161,7 +161,6 @@ public class CategoryLifecycleTest extends BaseEspressoTest {
   }
 
   @Test
-  @FlakyTest(detail = "Fixme with Idling Resources or BusyBee") // FIXME
   public void categoryDeletion () throws InterruptedException {
 
     addNewCategory();
