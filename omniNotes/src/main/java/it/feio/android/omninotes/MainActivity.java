@@ -71,7 +71,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-
+//베이스 액티비티 상속
 public class MainActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
   private static boolean isPasswordAccepted = false;
@@ -80,6 +80,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   public final static String FRAGMENT_DETAIL_TAG = "fragment_detail";
   public final static String FRAGMENT_SKETCH_TAG = "fragment_sketch";
   public Uri sketchUri;
+  //레이아웃 연결
   @BindView(R.id.crouton_handle)
   ViewGroup croutonViewContainer;
   @BindView(R.id.toolbar)
@@ -92,9 +93,12 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   @Override
   protected void onCreate (Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    //옴니노트 테마 스타일 세팅
     setTheme(R.style.OmniNotesTheme_ApiSpec);
     setContentView(R.layout.activity_main);
+    //버터나이프 라이브러리 사용(뷰 선언 및 연결 작업 도와주는 라이브러리)
     ButterKnife.bind(this);
+    //이벤트버스(Activity, Fragment, Service, Thread 에 데이터 전달용으로 쉽게 쓸 수 있는 플러그인)
     EventBus.getDefault().register(this);
     prefs.registerOnSharedPreferenceChangeListener(this);
 
