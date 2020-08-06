@@ -84,7 +84,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   @BindView(R.id.crouton_handle)
   ViewGroup croutonViewContainer;
   @BindView(R.id.toolbar)
-  Toolbar toolbar;
+  Toolbar toolbar; //앱 상단의 바(구 버전에서는 액션바였던것)
   @BindView(R.id.drawer_layout)
   DrawerLayout drawerLayout;
   boolean prefsChanged = false;
@@ -99,11 +99,12 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
     //버터나이프 라이브러리 사용(뷰 선언 및 연결 작업 도와주는 라이브러리)
     ButterKnife.bind(this);
     //이벤트버스(Activity, Fragment, Service, Thread 에 데이터 전달용으로 쉽게 쓸 수 있는 플러그인)
-    EventBus.getDefault().register(this);
+    EventBus.getDefault().register(this); //이벤트버스 장착(이벤트 수신받을 수 있게)
     prefs.registerOnSharedPreferenceChangeListener(this);
 
     initUI();
 
+    //인트로 액티비티 실행?
     if (IntroActivity.mustRun()) {
       startActivity(new Intent(getApplicationContext(), IntroActivity.class));
     }
@@ -111,10 +112,11 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
 //		new UpdaterTask(this).execute(); Removed due to missing backend
   }
 
+
   @Override
-  protected void onResume () {
+  protected void onResume () { //앱이 다시 실행 될 때
     super.onResume();
-    if (isPasswordAccepted) {
+    if (isPasswordAccepted) { //비밀번호가 맞으면 init()메소드 실행
       init();
     } else {
       checkPassword();
@@ -123,14 +125,15 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
 
 
   @Override
-  protected void onStop () {
-    super.onStop();
-    EventBus.getDefault().unregister(this);
+  protected void onStop () { //앱이 멈췄을 때
+    super.onStop(); //부모클래스(BaseActivity)의 onStop()메소드 실행
+    EventBus.getDefault().unregister(this); //이벤트버스 해제
+    //이벤트버스 - 이벤트를 수신 받기 원하는 곳을 eventbus에 register해두면 이벤트를 수신 받을 수 있다
   }
 
 
   private void initUI () {
-    setSupportActionBar(toolbar);
+    setSupportActionBar(toolbar); //액션바를 툴바로 설정하여 세팅(액션바를 툴바로 대체)
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setHomeButtonEnabled(true);
   }
@@ -139,10 +142,11 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   /**
    * This method starts the bootstrap chain.
    */
+  //비밀번호 체크, 맞으면 init()
   private void checkPassword () {
     if (prefs.getString(PREF_PASSWORD, null) != null
         && prefs.getBoolean("settings_password_access", false)) {
-      PasswordHelper.requestPassword(this, passwordConfirmed -> {
+      PasswordHelper.requestPassword(this, passwordConfirmed -> { //유틸폴더의 PasswordHelper클래스 사용
         switch (passwordConfirmed) {
           case SUCCEED:
             init();
@@ -160,19 +164,22 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  // 비밀번호 삭제 이벤트
   public void onEvent (PasswordRemovedEvent passwordRemovedEvent) {
     showMessage(R.string.password_successfully_removed, ONStyle.ALERT);
     init();
   }
 
 
+  // 로그인 완료 후
   private void init () {
     isPasswordAccepted = true;
 
-    getFragmentManagerInstance();
+    getFragmentManagerInstance(); //액티비티에서 프래그먼트를 다루기 위해
 
+    //NavigationDrawer - 왼쪽에 슬라이드 형식으로 튀어나오는 패널
     NavigationDrawerFragment mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManagerInstance()
-        .findFragmentById(R.id.navigation_drawer);
+        .findFragmentById(R.id.navigation_drawer); //NavigationDrawer 연결
     if (mNavigationDrawerFragment == null) {
       FragmentTransaction fragmentTransaction = getFragmentManagerInstance().beginTransaction();
       fragmentTransaction.replace(R.id.navigation_drawer, new NavigationDrawerFragment(),
@@ -184,7 +191,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
       fragmentTransaction.add(R.id.fragment_container, new ListFragment(), FRAGMENT_LIST_TAG).commit();
     }
 
-    handleIntents();
+    handleIntents(); //handleIntents 메소드 실행
   }
 
   private FragmentManager getFragmentManagerInstance () {
@@ -255,6 +262,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
     return result;
   }
 
+  //Back버튼 누를시
   @Override
   public void onBackPressed () {
 

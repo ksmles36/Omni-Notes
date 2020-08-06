@@ -55,6 +55,7 @@ public class BaseActivity extends AppCompatActivity {
   protected static final int TRANSITION_VERTICAL = 0;
   protected static final int TRANSITION_HORIZONTAL = 1;
 
+  //SharedPreferences 간단한 데이터 저장
   protected SharedPreferences prefs;
 
   protected String navigation;
