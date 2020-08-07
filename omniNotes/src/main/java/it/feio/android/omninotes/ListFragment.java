@@ -1695,6 +1695,7 @@ public class ListFragment extends BaseFragment implements OnViewTouchedListener,
   }
 
 
+  //커밋 보류중
   void commitPending () {
     if (undoTrash || undoArchive || undoCategorize) {
 

@@ -194,6 +194,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
     handleIntents(); //handleIntents 메소드 실행
   }
 
+  //액티비티에서 프래그먼트 사용 위한 것으로 추정
   private FragmentManager getFragmentManagerInstance () {
     if (mFragmentManager == null) {
       mFragmentManager = getSupportFragmentManager();
@@ -201,6 +202,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
     return mFragmentManager;
   }
 
+  //현재 화면에서 다시 현재 화면 호출 시
   @Override
   protected void onNewIntent (Intent intent) {
     if (intent.getAction() == null) {
@@ -223,6 +225,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //태그 수정 - editCategory 호출
   public void editTag (Category tag) {
     Fragment f = checkFragmentInstance(R.id.fragment_container, ListFragment.class);
     if (f != null) {
@@ -231,6 +234,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //ListFragment 클래스의 메소드 호출 - toggleSearchLabel, initNotesList
   public void initNotesList (Intent intent) {
     Fragment f = checkFragmentInstance(R.id.fragment_container, ListFragment.class);
     if (f != null) {
@@ -242,6 +246,8 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //NavigationDrawerFragment클래스의 onDrawerOpened 메소드에서 사용됨
+  //커밋 보류중
   public void commitPending () {
     Fragment f = checkFragmentInstance(R.id.fragment_container, ListFragment.class);
     if (f != null) {
@@ -253,6 +259,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   /**
    * Checks if allocated fragment is of the required type and then returns it or returns null
    */
+  //할당 된 프래그먼트가 필요한 유형인지 확인한 다음 반환하거나 null을 반환
   private Fragment checkFragmentInstance (int id, Object instanceClass) {
     Fragment result = null;
     Fragment fragment = getFragmentManagerInstance().findFragmentById(id);
@@ -272,6 +279,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
       ((SketchFragment) f).save();
 
       // Removes forced portrait orientation for this fragment
+      //화면 회전에 관련된 코드
       setRequestedOrientation(
           ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
@@ -309,6 +317,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //액티비티가 종료되는 경우에 데이터를 저장할 수 있게해줌
   @Override
   public void onSaveInstanceState (Bundle outState) {
     super.onSaveInstanceState(outState);
@@ -316,6 +325,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //액티비티 생명주기 Pause시에 호출
   @Override
   protected void onPause () {
     super.onPause();
@@ -323,11 +333,13 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //DrawerLayout 호출? - DrawerLayout - 서랍형식으로(슬라이딩 메뉴) 열리는 레이아웃
   public DrawerLayout getDrawerLayout () {
     return drawerLayout;
   }
 
 
+  //ActionBarDrawerToggle 은 Navigation Drawer 를 ActionBar 에서 콘트롤하기 쉽도록 제공되는 class 이다
   public ActionBarDrawerToggle getDrawerToggle () {
     if (getFragmentManagerInstance().findFragmentById(R.id.navigation_drawer) != null) {
       return ((NavigationDrawerFragment) getFragmentManagerInstance().findFragmentById(
@@ -341,6 +353,10 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   /**
    * Finishes multiselection mode started by ListFragment
    */
+  //ListFragment에 의해 시작된 다중선택 모드를 마감하라
+
+  //ActionMode 종료시 호출
+  //액션 모드는 특정 상황에 임시적으로 열리는 액션바다 (메모 길게 누르면 다중선택모드로 되는 식)
   public void finishActionMode () {
     ListFragment fragment = (ListFragment) getFragmentManagerInstance().findFragmentByTag(FRAGMENT_LIST_TAG);
     if (fragment != null) {
@@ -349,11 +365,13 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //툴바 가져오기? 툴바 호출?
   Toolbar getToolbar () {
     return toolbar;
   }
 
 
+  //기능, 목적 모르겠음... 인텐트를 다루는 용도?
   private void handleIntents () {
     Intent i = getIntent();
 
@@ -365,12 +383,14 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
       SystemHelper.restartApp(getApplicationContext(), MainActivity.class);
     }
 
+    //receivedIntent() 메소드로 들어온 인자가 있으면
     if (receivedIntent(i)) {
-      Note note = i.getParcelableExtra(INTENT_NOTE);
+      Note note = i.getParcelableExtra(INTENT_NOTE); //putExtra로 넘긴 Parcelable 받아올때 사용
       if (note == null) {
         note = DbHelper.getInstance().getNote(i.getIntExtra(INTENT_KEY, 0));
       }
       // Checks if the same note is already opened to avoid to open again
+      //이미 해당노트가 열려있다면 다시 오픈하지 않도록
       if (note != null && noteAlreadyOpened(note)) {
         return;
       }
@@ -404,6 +424,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   /**
    * Used to perform a quick text-only note saving (eg. Tasker+Pushbullet)
    */
+  //노트 수정 종료와 동시에 저장하면서 빠져나오기위한 메소드
   private void saveAndExit (Intent i) {
     Note note = new Note();
     note.setTitle(i.getStringExtra(Intent.EXTRA_SUBJECT));
@@ -414,6 +435,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //인텐트 받기 - 노티바, 위젯 등 클릭 시 호출
   private boolean receivedIntent (Intent i) {
     return ACTION_SHORTCUT.equals(i.getAction())
         || ACTION_NOTIFICATION_CLICK.equals(i.getAction())
@@ -427,6 +449,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //메모가 이미 열려있을 때
   private boolean noteAlreadyOpened (Note note) {
     DetailFragment detailFragment = (DetailFragment) getFragmentManagerInstance().findFragmentByTag(
         FRAGMENT_DETAIL_TAG);
@@ -434,6 +457,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //모르겠음, 아마 메모 리스트 화면으로 돌아가는 메소드
   public void switchToList () {
     FragmentTransaction transaction = getFragmentManagerInstance().beginTransaction();
     animateTransition(transaction, TRANSITION_HORIZONTAL);
@@ -448,6 +472,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //아마 메모 내용화면으로 돌아가는 메소드
   public void switchToDetail (Note note) {
     FragmentTransaction transaction = getFragmentManagerInstance().beginTransaction();
     animateTransition(transaction, TRANSITION_HORIZONTAL);
@@ -471,6 +496,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   /**
    * Notes sharing
    */
+  //노트 공유 기능
   public void shareNote (Note note) {
 
     String titleText = note.getTitle();
@@ -523,6 +549,8 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
    *
    * @param note Note to be deleted
    */
+
+  //메모 삭제
   public void deleteNote (Note note) {
     new NoteProcessorDelete(Collections.singletonList(note)).process();
     BaseActivity.notifyAppWidgets(this);
@@ -530,6 +558,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //위젯 변경시 업데이트
   public void updateWidgets () {
     new UpdateWidgetsTask(getApplicationContext())
         .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -541,11 +570,13 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
+  //모르겠음
   public void showMessage (String message, Style style) {
     // ViewGroup used to show Crouton keeping compatibility with the new Toolbar
     runOnUiThread(() -> Crouton.makeText(this, message, style, croutonViewContainer).show());
   }
 
+  //모르겠음
   @Override
   public void onSharedPreferenceChanged (SharedPreferences sharedPreferences, String key) {
     prefsChanged = true;
