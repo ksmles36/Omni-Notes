@@ -49,6 +49,8 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+//BaseActivity는 코드구현을 한 뒤 다른곳에서 사용하는 용도로 쓴다
+//보통의 액티비티에서는 AppCompatActivity를 상속받지만 BaseActivity를 대신 상속받아서 사용한다
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
@@ -62,19 +64,22 @@ public class BaseActivity extends AppCompatActivity {
   protected String navigationTmp; // used for widget navigation
 
 
+  //툴바의 메뉴 생성
   @Override
   public boolean onCreateOptionsMenu (Menu menu) {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.menu_list, menu);
-    return super.onCreateOptionsMenu(menu);
+    return super.onCreateOptionsMenu(menu); //Menu Inflater를 통하여 XML Menu 리소스에 정의된 내용을 파싱 하여 Menu 객체를 생성하고 추가
   }
 
+  //앱 구동 시작 시에 필요
   @Override
   protected void attachBaseContext (Context newBase) {
     Context context = LanguageHelper.updateLanguage(newBase, null);
     super.attachBaseContext(context);
   }
 
+  //자세한 기능 모르겠음
   @Override
   protected void onCreate (Bundle savedInstanceState) {
     prefs = getSharedPreferences(PREFS_NAME, MODE_MULTI_PROCESS);
@@ -96,12 +101,14 @@ public class BaseActivity extends AppCompatActivity {
   @Override
   protected void onResume () {
     super.onResume();
+    //네비게이션 리스트 가져온다(툴바의 좌측 햄버거메뉴, Notes, Trash, Settings 등)
     String navNotes = getResources().getStringArray(R.array.navigation_list_codes)[0];
     navigation = prefs.getString(PREF_NAVIGATION, navNotes);
     LogDelegate.d(prefs.getAll().toString());
   }
 
 
+  //토스트 메세지 생성용 메소드
   protected void showToast (CharSequence text, int duration) {
     if (prefs.getBoolean("settings_enable_info", true)) {
       Toast.makeText(getApplicationContext(), text, duration).show();
@@ -113,6 +120,10 @@ public class BaseActivity extends AppCompatActivity {
    * Method to validate security password to protect a list of notes. When "Request password on access" in switched on
    * this check not required all the times. It uses an interface callback.
    */
+  //메모 목록을 보호하기 위해 보안 암호를 확인하는 방법입니다. "액세스시 암호 요청"이 켜져있을 때
+  //   *이 확인은 항상 필요하지 않습니다. 인터페이스 콜백을 사용합니다.
+
+  //암호 요청, onPasswordValidated-비밀번호 유효성 체크
   public void requestPassword (final Activity mActivity, List<Note> notes,
       final PasswordValidator mPasswordValidator) {
     if (prefs.getBoolean("settings_password_access", false)) {
@@ -135,6 +146,7 @@ public class BaseActivity extends AppCompatActivity {
   }
 
 
+  //햄버거 메뉴 네비게이션 수정
   public boolean updateNavigation (String nav) {
     if (nav.equals(navigationTmp) || (navigationTmp == null && Navigation.getNavigationText().equals(nav))) {
       return false;
@@ -151,6 +163,8 @@ public class BaseActivity extends AppCompatActivity {
    *
    * @returnnotifyAppWidgets
    */
+  //이름으로 리소스를 검색합니다
+
   private String getStringResourceByName (String aString) {
     String packageName = getApplicationContext().getPackageName();
     int resId = getResources().getIdentifier(aString, "string", packageName);
@@ -161,6 +175,8 @@ public class BaseActivity extends AppCompatActivity {
   /**
    * Notifies App Widgets about data changes so they can update theirselves
    */
+  //데이터 변경에 대해 앱 위젯에 알림을 보내서 스스로 업데이트 할 수 있습니다.
+  //위젯에 (변경사항)알리기
   public static void notifyAppWidgets (Context context) {
     // Home widgets
     AppWidgetManager mgr = AppWidgetManager.getInstance(context);
@@ -173,6 +189,8 @@ public class BaseActivity extends AppCompatActivity {
   }
 
 
+  //애니메이션 전환
+  //direction-방향, fade in, fade out - 서서히 사라지거나 서서히 나타나는 애니메이션(효과)
   @SuppressLint("InlinedApi")
   protected void animateTransition (FragmentTransaction transaction, int direction) {
     if (direction == TRANSITION_HORIZONTAL) {
@@ -186,6 +204,7 @@ public class BaseActivity extends AppCompatActivity {
   }
 
 
+  //액션바(툴바) 타이틀 이름 설정
   protected void setActionBarTitle (String title) {
     // Creating a spannable to support custom fonts on ActionBar
     int actionBarTitle = Resources.getSystem().getIdentifier("action_bar_title", "ID", "android");
@@ -206,6 +225,7 @@ public class BaseActivity extends AppCompatActivity {
   }
 
 
+  //onKeyDown-키보드가 눌렸을 때, KEYCODE_MENU-사용자 단말기의 메뉴버튼 클릭시
   @Override
   public boolean onKeyDown (int keyCode, KeyEvent event) {
     return keyCode == KeyEvent.KEYCODE_MENU || super.onKeyDown(keyCode, event);

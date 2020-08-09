@@ -171,7 +171,7 @@ public class MainActivity extends BaseActivity implements SharedPreferences.OnSh
   }
 
 
-  // 로그인 완료 후
+  // 로그인 완료 후 초기화, init - 초기화
   private void init () {
     isPasswordAccepted = true;
 

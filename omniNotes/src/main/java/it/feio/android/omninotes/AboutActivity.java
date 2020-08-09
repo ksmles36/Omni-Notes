@@ -21,6 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.webkit.WebView;
 
 
+//앱의 settings-about-Info 클릭 시
 public class AboutActivity extends BaseActivity {
 
   protected void onCreate (Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class AboutActivity extends BaseActivity {
   }
 
 
+  //start 사이클 시 애널리틱스(구글 애널리틱스)(방분자 데이터 수집) trackScreenView 시작
   @Override
   public void onStart () {
     ((OmniNotes) getApplication()).getAnalyticsHelper().trackScreenView(getClass().getName());
@@ -48,6 +50,8 @@ public class AboutActivity extends BaseActivity {
   }
 
 
+  //init-초기화, initUI UI 초기화
+  //툴바 생성하고 클릭리스너 붙이는 과정일듯
   private void initUI () {
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
